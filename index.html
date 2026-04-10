@@ -1,0 +1,85 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posuda_Sona — Главная</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo"><a href="index.html">Posuda_Sona</a></div>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"></span>
+        </a>
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <div id="user-info" class="user-info"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="fade-in">
+    <section class="hero container">
+      <h1>Искусство сервировки</h1>
+      <p style="font-size:1.2rem; color: var(--text-secondary);">Посуда, которая вдохновляет</p>
+    </section>
+
+    <div class="container">
+      <h2 style="margin-bottom: 1.5rem;">Популярные категории</h2>
+      <div class="categories-grid">
+        <a href="catalog.html" class="category-card">
+          <i class="fas fa-utensils"></i>
+          <h3>Тарелки</h3>
+        </a>
+        <a href="catalog.html" class="category-card">
+          <i class="fas fa-mug-hot"></i>
+          <h3>Чашки</h3>
+        </a>
+        <a href="catalog.html" class="category-card">
+          <i class="fas fa-mortar-pestle"></i>
+          <h3>Кастрюли</h3>
+        </a>
+        <a href="catalog.html" class="category-card">
+          <i class="fas fa-egg"></i>
+          <h3>Сковороды</h3>
+        </a>
+      </div>
+
+      <h2 style="margin: 3rem 0 1.5rem;">Преимущества</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:2rem;">
+        <div style="text-align:center;"><i class="fas fa-truck" style="font-size:2.5rem; color:var(--primary);"></i><h3>Быстрая доставка</h3><p style="color:var(--text-secondary);">По всей стране</p></div>
+        <div style="text-align:center;"><i class="fas fa-medal" style="font-size:2.5rem; color:var(--primary);"></i><h3>Гарантия качества</h3><p style="color:var(--text-secondary);">Лучшие материалы</p></div>
+        <div style="text-align:center;"><i class="fas fa-headset" style="font-size:2.5rem; color:var(--primary);"></i><h3>Поддержка 24/7</h3><p style="color:var(--text-secondary);">Всегда на связи</p></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© 2025 Posuda_Sona</span>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-vk"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Дополнительная логика для главной (если нужна)
+    document.addEventListener('DOMContentLoaded', () => {
+      App.updateHeaderAuth();
+    });
+  </script>
+</body>
+</html>
