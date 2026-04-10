@@ -1,0 +1,163 @@
+<!-- admin.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админ-панель — Posuda_Sona</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo"><a href="index.html">Posuda_Sona</a></div>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"></span>
+        </a>
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <div id="user-info" class="user-info"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="fade-in container">
+    <h1>Панель администратора</h1>
+    <div id="admin-content">
+      <!-- Проверка авторизации админа -->
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© 2025 Posuda_Sona</span>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-vk"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      App.updateHeaderAuth();
+      const user = App.getCurrentUser();
+      const container = document.getElementById('admin-content');
+
+      if (!user || !user.isAdmin) {
+        container.innerHTML = `
+          <div class="auth-form">
+            <h2>Вход для администратора</h2>
+            <form id="admin-login-form">
+              <div class="form-group">
+                <label>Логин</label>
+                <input type="text" class="form-control" id="admin-login" value="admin">
+              </div>
+              <div class="form-group">
+                <label>Пароль</label>
+                <input type="password" class="form-control" id="admin-password" value="admin">
+              </div>
+              <div id="admin-error" class="error-message"></div>
+              <button type="submit" class="btn btn-block">Войти</button>
+            </form>
+          </div>
+        `;
+        document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const login = document.getElementById('admin-login').value;
+          const pass = document.getElementById('admin-password').value;
+          if (login === 'admin' && pass === 'admin') {
+            App.setCurrentUser({ username: 'admin', isAdmin: true });
+            window.location.reload();
+          } else {
+            document.getElementById('admin-error').textContent = 'Неверные данные';
+          }
+        });
+        return;
+      }
+
+      // Админ авторизован
+      function renderOrders() {
+        const orders = App.getOrders();
+        let html = '<h2>Заявки</h2>';
+        if (orders.length === 0) {
+          html += '<p>Нет заявок.</p>';
+        } else {
+          html += '<table class="admin-table"><tr><th>ID</th><th>Покупатель</th><th>Сумма</th><th>Дата</th><th>Статус</th><th>Действия</th></tr>';
+          orders.forEach(order => {
+            html += `<tr>
+              <td>${order.id}</td>
+              <td>${order.username}</td>
+              <td>${order.total} ₽</td>
+              <td>${order.date}</td>
+              <td>${order.status}</td>
+              <td><button class="btn btn-outline chat-btn" data-username="${order.username}">Написать</button></td>
+            </tr>`;
+          });
+          html += '</table>';
+        }
+        html += '<div id="chat-section" style="margin-top:2rem;"></div>';
+        container.innerHTML = html;
+
+        // Обработчики для кнопок чата
+        document.querySelectorAll('.chat-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const username = btn.dataset.username;
+            openChatWithUser(username);
+          });
+        });
+      }
+
+      function openChatWithUser(username) {
+        const chatId = App.getChatId(username);
+        const chats = App.getChats();
+        const messages = chats[chatId] || [];
+        const chatSection = document.getElementById('chat-section');
+        chatSection.innerHTML = `
+          <div class="chat-container">
+            <h3>Чат с ${username}</h3>
+            <div id="admin-chat-messages" class="chat-messages"></div>
+            <div class="chat-input-group">
+              <input type="text" id="admin-chat-input" class="form-control" placeholder="Сообщение...">
+              <button class="btn" id="admin-send-btn">Отправить</button>
+            </div>
+          </div>
+        `;
+        const msgDiv = document.getElementById('admin-chat-messages');
+        function renderMsgs() {
+          const currentChats = App.getChats();
+          const msgs = currentChats[chatId] || [];
+          msgDiv.innerHTML = '';
+          msgs.forEach(msg => {
+            const div = document.createElement('div');
+            div.className = `message ${msg.sender === 'admin' ? 'own' : ''}`;
+            div.innerHTML = `<strong>${msg.sender === 'admin' ? 'Вы' : username}:</strong> ${msg.text}<br><small>${msg.timestamp}</small>`;
+            msgDiv.appendChild(div);
+          });
+          msgDiv.scrollTop = msgDiv.scrollHeight;
+        }
+        renderMsgs();
+
+        document.getElementById('admin-send-btn').addEventListener('click', () => {
+          const input = document.getElementById('admin-chat-input');
+          const text = input.value.trim();
+          if (!text) return;
+          App.sendMessage(chatId, 'admin', text);
+          renderMsgs();
+          input.value = '';
+        });
+      }
+
+      renderOrders();
+    });
+  </script>
+</body>
+</html>
