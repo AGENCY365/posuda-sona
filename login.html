@@ -1,0 +1,178 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Posuda_Sona</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo"><a href="index.html">Posuda_Sona</a></div>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"></span>
+        </a>
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <div id="user-info" class="user-info"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="fade-in container">
+    <div class="auth-form">
+      <h2 style="margin-bottom:1.5rem; text-align:center;">Вход / Регистрация</h2>
+      <div id="auth-tabs" style="display:flex; gap:1rem; margin-bottom:1.5rem;">
+        <button class="btn btn-outline active" id="tab-login">Вход</button>
+        <button class="btn btn-outline" id="tab-register">Регистрация</button>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label>Ник (только английские буквы)</label>
+          <input type="text" class="form-control" id="login-username" required>
+        </div>
+        <div class="form-group">
+          <label>Пароль</label>
+          <input type="password" class="form-control" id="login-password" required>
+        </div>
+        <div id="login-error" class="error-message"></div>
+        <button type="submit" class="btn btn-block">Войти</button>
+      </form>
+
+      <form id="register-form" style="display:none;">
+        <div class="form-group">
+          <label>Ник (только латиница)</label>
+          <input type="text" class="form-control" id="reg-username" required>
+          <div id="reg-username-error" class="error-message"></div>
+        </div>
+        <div class="form-group">
+          <label>Пароль (мин. 6 символов)</label>
+          <input type="password" class="form-control" id="reg-password" required>
+        </div>
+        <div id="reg-error" class="error-message"></div>
+        <button type="submit" class="btn btn-block" id="reg-submit-btn">Зарегистрироваться</button>
+      </form>
+
+      <p style="margin-top:1rem; text-align:center;"><a href="admin.html" style="color:var(--text-secondary);">Вход для администратора</a></p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© 2025 Posuda_Sona</span>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-vk"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      App.updateHeaderAuth();
+      const tabLogin = document.getElementById('tab-login');
+      const tabRegister = document.getElementById('tab-register');
+      const loginForm = document.getElementById('login-form');
+      const registerForm = document.getElementById('register-form');
+      const loginError = document.getElementById('login-error');
+      const regError = document.getElementById('reg-error');
+      const usernameRegError = document.getElementById('reg-username-error');
+      const regUsername = document.getElementById('reg-username');
+      const regSubmitBtn = document.getElementById('reg-submit-btn');
+
+      // Переключение табов
+      tabLogin.addEventListener('click', () => {
+        loginForm.style.display = 'block';
+        registerForm.style.display = 'none';
+        tabLogin.classList.add('active');
+        tabRegister.classList.remove('active');
+      });
+      tabRegister.addEventListener('click', () => {
+        loginForm.style.display = 'none';
+        registerForm.style.display = 'block';
+        tabRegister.classList.add('active');
+        tabLogin.classList.remove('active');
+      });
+
+      // Валидация ника при регистрации
+      function validateUsername(username) {
+        return /^[a-zA-Z]+$/.test(username);
+      }
+
+      regUsername.addEventListener('input', () => {
+        const val = regUsername.value;
+        if (!validateUsername(val)) {
+          usernameRegError.textContent = 'Только английские буквы (a-z, A-Z)';
+          regSubmitBtn.disabled = true;
+        } else {
+          usernameRegError.textContent = '';
+          regSubmitBtn.disabled = false;
+        }
+      });
+
+      // Вход
+      loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+
+        // Админская проверка
+        if (username === 'admin' && password === 'admin') {
+          App.setCurrentUser({ username: 'admin', isAdmin: true });
+          window.location.href = 'admin.html';
+          return;
+        }
+
+        const users = App.getUsers();
+        const user = users.find(u => u.username === username && u.password === password);
+        if (user) {
+          App.setCurrentUser({ username: user.username, isAdmin: false });
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect') || 'index.html';
+          window.location.href = redirect;
+        } else {
+          loginError.textContent = 'Неверный ник или пароль';
+        }
+      });
+
+      // Регистрация
+      registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const username = regUsername.value.trim();
+        const password = document.getElementById('reg-password').value;
+
+        if (!validateUsername(username)) {
+          usernameRegError.textContent = 'Только английские буквы';
+          return;
+        }
+        if (password.length < 6) {
+          regError.textContent = 'Пароль должен быть не менее 6 символов';
+          return;
+        }
+
+        const users = App.getUsers();
+        if (users.find(u => u.username === username)) {
+          regError.textContent = 'Пользователь с таким ником уже существует';
+          return;
+        }
+
+        users.push({ username, password });
+        App.saveUsers(users);
+        App.setCurrentUser({ username, isAdmin: false });
+        window.location.href = 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>
