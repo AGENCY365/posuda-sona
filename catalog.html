@@ -1,0 +1,84 @@
+<!-- catalog.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Каталог — Posuda_Sona</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo"><a href="index.html">Posuda_Sona</a></div>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"></span>
+        </a>
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <div id="user-info" class="user-info"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="fade-in container">
+    <h1 style="margin-bottom: 1.5rem;">Каталог посуды</h1>
+    <div id="catalog-container" class="catalog-grid"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© 2025 Posuda_Sona</span>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-vk"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      App.updateHeaderAuth();
+      const container = document.getElementById('catalog-container');
+      const user = App.getCurrentUser();
+
+      App.PRODUCTS.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <div class="product-image">${product.icon}</div>
+          <div class="product-info">
+            <div class="product-title">${product.name}</div>
+            <div class="product-price">${product.price} ₽</div>
+          </div>
+          <div class="product-actions">
+            <button class="btn btn-block buy-btn" data-id="${product.id}">Купить</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      container.addEventListener('click', (e) => {
+        const btn = e.target.closest('.buy-btn');
+        if (!btn) return;
+        const productId = parseInt(btn.dataset.id);
+        const currentUser = App.getCurrentUser();
+        if (!currentUser || currentUser.isAdmin) {
+          window.location.href = 'login.html?redirect=catalog.html';
+          return;
+        }
+        App.addToCart(productId, currentUser.username);
+        App.updateCartCounter();
+      });
+    });
+  </script>
+</body>
+</html>
