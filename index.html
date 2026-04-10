@@ -7,6 +7,8 @@
   <title>Posuda_Sona — Главная</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <!-- Подключаем шрифт Inter для более современного вида -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="header">
@@ -30,11 +32,11 @@
   <main class="fade-in">
     <section class="hero container">
       <h1>Искусство сервировки</h1>
-      <p style="font-size:1.2rem; color: var(--text-secondary);">Посуда, которая вдохновляет</p>
+      <p>Посуда, которая вдохновляет — от минимализма до ярких акцентов</p>
     </section>
 
     <div class="container">
-      <h2 style="margin-bottom: 1.5rem;">Популярные категории</h2>
+      <h2 style="margin-bottom: 1.5rem; font-size: 2rem; font-weight: 700;">Популярные категории</h2>
       <div class="categories-grid">
         <a href="catalog.html" class="category-card">
           <i class="fas fa-utensils"></i>
@@ -54,11 +56,11 @@
         </a>
       </div>
 
-      <h2 style="margin: 3rem 0 1.5rem;">Преимущества</h2>
-      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:2rem;">
-        <div style="text-align:center;"><i class="fas fa-truck" style="font-size:2.5rem; color:var(--primary);"></i><h3>Быстрая доставка</h3><p style="color:var(--text-secondary);">По всей стране</p></div>
-        <div style="text-align:center;"><i class="fas fa-medal" style="font-size:2.5rem; color:var(--primary);"></i><h3>Гарантия качества</h3><p style="color:var(--text-secondary);">Лучшие материалы</p></div>
-        <div style="text-align:center;"><i class="fas fa-headset" style="font-size:2.5rem; color:var(--primary);"></i><h3>Поддержка 24/7</h3><p style="color:var(--text-secondary);">Всегда на связи</p></div>
+      <h2 style="margin: 4rem 0 2rem; font-size: 2rem; font-weight: 700;">Почему выбирают нас</h2>
+      <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:2.5rem; text-align:center;">
+        <div><i class="fas fa-truck" style="font-size:2.8rem; color:var(--primary); margin-bottom:1rem;"></i><h3>Быстрая доставка</h3><p style="color:var(--text-secondary);">По всей стране за 2-3 дня</p></div>
+        <div><i class="fas fa-medal" style="font-size:2.8rem; color:var(--primary); margin-bottom:1rem;"></i><h3>Гарантия качества</h3><p style="color:var(--text-secondary);">Только проверенные материалы</p></div>
+        <div><i class="fas fa-headset" style="font-size:2.8rem; color:var(--primary); margin-bottom:1rem;"></i><h3>Поддержка 24/7</h3><p style="color:var(--text-secondary);">Ответим на любой вопрос</p></div>
       </div>
     </div>
   </main>
@@ -76,10 +78,7 @@
 
   <script src="script.js"></script>
   <script>
-    // Дополнительная логика для главной (если нужна)
-    document.addEventListener('DOMContentLoaded', () => {
-      App.updateHeaderAuth();
-    });
+    document.addEventListener('DOMContentLoaded', () => App.updateHeaderAuth());
   </script>
 </body>
 </html>
