@@ -7,6 +7,7 @@
   <title>Админ-панель — Posuda_Sona</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="header">
@@ -28,10 +29,8 @@
   </header>
 
   <main class="fade-in container">
-    <h1>Панель администратора</h1>
-    <div id="admin-content">
-      <!-- Проверка авторизации админа -->
-    </div>
+    <h1 style="margin-bottom:2rem; font-size:2.5rem; font-weight:700;">Панель администратора</h1>
+    <div id="admin-content"></div>
   </main>
 
   <footer class="footer">
@@ -55,7 +54,7 @@
       if (!user || !user.isAdmin) {
         container.innerHTML = `
           <div class="auth-form">
-            <h2>Вход для администратора</h2>
+            <h2 style="margin-bottom:1.5rem;">Вход для администратора</h2>
             <form id="admin-login-form">
               <div class="form-group">
                 <label>Логин</label>
@@ -84,10 +83,11 @@
         return;
       }
 
-      // Админ авторизован
+      // Админ авторизован — рендерим заявки
       function renderOrders() {
         const orders = App.getOrders();
-        let html = '<h2>Заявки</h2>';
+        console.log('Загруженные заказы:', orders); // для отладки
+        let html = '<h2 style="margin-bottom:1rem;">Заявки</h2>';
         if (orders.length === 0) {
           html += '<p>Нет заявок.</p>';
         } else {
@@ -99,7 +99,7 @@
               <td>${order.total} ₽</td>
               <td>${order.date}</td>
               <td>${order.status}</td>
-              <td><button class="btn btn-outline chat-btn" data-username="${order.username}">Написать</button></td>
+              <td><button class="btn btn-outline chat-btn" data-username="${order.username}"><i class="fas fa-comment"></i> Написать</button></td>
             </tr>`;
           });
           html += '</table>';
@@ -107,12 +107,8 @@
         html += '<div id="chat-section" style="margin-top:2rem;"></div>';
         container.innerHTML = html;
 
-        // Обработчики для кнопок чата
         document.querySelectorAll('.chat-btn').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const username = btn.dataset.username;
-            openChatWithUser(username);
-          });
+          btn.addEventListener('click', () => openChatWithUser(btn.dataset.username));
         });
       }
 
@@ -123,11 +119,11 @@
         const chatSection = document.getElementById('chat-section');
         chatSection.innerHTML = `
           <div class="chat-container">
-            <h3>Чат с ${username}</h3>
+            <h3><i class="fas fa-user"></i> Чат с ${username}</h3>
             <div id="admin-chat-messages" class="chat-messages"></div>
             <div class="chat-input-group">
-              <input type="text" id="admin-chat-input" class="form-control" placeholder="Сообщение...">
-              <button class="btn" id="admin-send-btn">Отправить</button>
+              <input type="text" id="admin-chat-input" class="form-control" placeholder="Введите сообщение...">
+              <button class="btn" id="admin-send-btn"><i class="fas fa-paper-plane"></i></button>
             </div>
           </div>
         `;
