@@ -1,0 +1,109 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет — Posuda_Sona</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="logo"><a href="index.html">Posuda_Sona</a></div>
+      <nav class="nav">
+        <a href="index.html">Главная</a>
+        <a href="catalog.html">Каталог</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"></span>
+        </a>
+        <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+        <div id="user-info" class="user-info"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="fade-in container">
+    <h1>Личный кабинет</h1>
+    <div id="profile-content"></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <span>© 2025 Posuda_Sona</span>
+      <div class="social-links">
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-telegram"></i></a>
+        <a href="#"><i class="fab fa-vk"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      App.updateHeaderAuth();
+      const user = App.getCurrentUser();
+      const container = document.getElementById('profile-content');
+
+      if (!user || user.isAdmin) {
+        container.innerHTML = '<p class="empty-message">Доступ только для покупателей.</p>';
+        return;
+      }
+
+      const chatId = App.getChatId(user.username);
+      const chats = App.getChats();
+      const messages = chats[chatId] || [];
+
+      function renderChat() {
+        const chatMessagesDiv = document.getElementById('chat-messages');
+        if (!chatMessagesDiv) return;
+        chatMessagesDiv.innerHTML = '';
+        messages.forEach(msg => {
+          const div = document.createElement('div');
+          div.className = `message ${msg.sender === 'user' ? 'own' : ''}`;
+          div.innerHTML = `<strong>${msg.sender === 'user' ? 'Вы' : 'Админ'}:</strong> ${msg.text}<br><small>${msg.timestamp}</small>`;
+          chatMessagesDiv.appendChild(div);
+        });
+        chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+      }
+
+      let html = '<h2>Мои чаты</h2>';
+      if (messages.length === 0) {
+        html += '<p>У вас пока нет сообщений с администратором.</p>';
+      }
+      html += `
+        <div class="chat-container">
+          <h3>Чат с поддержкой</h3>
+          <div id="chat-messages" class="chat-messages"></div>
+          <div class="chat-input-group">
+            <input type="text" id="chat-input" class="form-control" placeholder="Введите сообщение...">
+            <button class="btn" id="send-msg-btn">Отправить</button>
+          </div>
+        </div>
+      `;
+      container.innerHTML = html;
+      renderChat();
+
+      document.getElementById('send-msg-btn').addEventListener('click', () => {
+        const input = document.getElementById('chat-input');
+        const text = input.value.trim();
+        if (!text) return;
+        App.sendMessage(chatId, 'user', text);
+        // Обновляем локально
+        const updatedChats = App.getChats();
+        const newMessages = updatedChats[chatId] || [];
+        // Перерисовываем
+        while (messages.length) messages.pop();
+        newMessages.forEach(m => messages.push(m));
+        renderChat();
+        input.value = '';
+      });
+    });
+  </script>
+</body>
+</html>
